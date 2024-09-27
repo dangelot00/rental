@@ -2,6 +2,7 @@ package org.blockbuster.rental.service;
 
 import org.blockbuster.rental.web.LoginUserDTO;
 import org.blockbuster.rental.web.RegisterUserDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,7 +10,10 @@ import org.springframework.stereotype.Service;
 import org.blockbuster.rental.repository.UserRepository;
 import org.blockbuster.rental.entity.User;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class AuthenticationService {
   private final UserRepository userRepository;
 
@@ -17,6 +21,7 @@ public class AuthenticationService {
 
   private final AuthenticationManager authenticationManager;
 
+  @Autowired
   public AuthenticationService(
       UserRepository userRepository,
       AuthenticationManager authenticationManager,
@@ -28,6 +33,8 @@ public class AuthenticationService {
   }
 
   public User signup(RegisterUserDTO input) {
+    log.debug("Signing up user: {}", input.getUsername());
+
     User user = new User();
     user.setUsername(input.getUsername());
     user.setPassword(passwordEncoder.encode(input.getPassword()));

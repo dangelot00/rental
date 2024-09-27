@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.blockbuster.rental.config.jwt.JwtTokenProvider;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RequestMapping("/auth")
 @RestController
+@Slf4j
 public class AuthenticationController {
   private final JwtTokenProvider jwtService;
 
@@ -26,6 +29,8 @@ public class AuthenticationController {
 
   @PostMapping("/signup")
   public ResponseEntity<User> register(@RequestBody RegisterUserDTO registerUserDto) {
+    log.debug("Received signup request for username: {}", registerUserDto.getUsername());
+
     User registeredUser = authenticationService.signup(registerUserDto);
 
     return ResponseEntity.ok(registeredUser);
