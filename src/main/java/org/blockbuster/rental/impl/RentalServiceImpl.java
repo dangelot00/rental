@@ -4,6 +4,9 @@ import org.blockbuster.rental.entity.Rental;
 import org.blockbuster.rental.entity.User;
 import org.blockbuster.rental.entity.Film;
 import org.blockbuster.rental.enums.FilmGenre;
+import org.blockbuster.rental.exception.CalculationCostException;
+import org.blockbuster.rental.exception.FilmNotFoundException;
+import org.blockbuster.rental.exception.UserNotFoundException;
 import org.blockbuster.rental.mapper.RentalMapper;
 import org.blockbuster.rental.repository.FilmRepository;
 import org.blockbuster.rental.repository.RentalRepository;
@@ -31,10 +34,10 @@ public class RentalServiceImpl implements RentalService {
   public RentalDTO rentFilm(String username, String filmTitle, int durationInDays) {
 
     User user = userRepository.findByUsername(username)
-                              .orElseThrow(() -> new RuntimeException("User not found"));
+                              .orElseThrow(() -> new UserNotFoundException("User not found"));
 
     Film film = filmRepository.findByTitle(filmTitle)
-                              .orElseThrow(() -> new RuntimeException("Film not found"));
+                              .orElseThrow(() -> new FilmNotFoundException("Film not found"));
 
     Rental rental = new Rental();
     rental.setUser(user);
@@ -72,7 +75,7 @@ public class RentalServiceImpl implements RentalService {
         yield BigDecimal.valueOf(10L * weeks);
       }
 
-      default -> throw new IllegalArgumentException("Unknown genre in cost calculation");
+      default -> throw new CalculationCostException("Unknown genre in cost calculation");
     };
 
   }
@@ -89,7 +92,7 @@ public class RentalServiceImpl implements RentalService {
 
       case CHILDREN -> BigDecimal.valueOf(1);
 
-      default -> throw new IllegalArgumentException("Unknown genre in deposit calculation");
+      default -> throw new CalculationCostException("Unknown genre in deposit calculation");
     };
 
   }

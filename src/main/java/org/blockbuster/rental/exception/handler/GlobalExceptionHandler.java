@@ -3,6 +3,8 @@ package org.blockbuster.rental.exception.handler;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 
+import org.blockbuster.rental.exception.CalculationCostException;
+import org.blockbuster.rental.exception.FilmNotFoundException;
 import org.blockbuster.rental.exception.UserNotFoundException;
 import org.blockbuster.rental.web.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -58,9 +60,15 @@ public class GlobalExceptionHandler {
     return errorDetail;
   }
 
-  @ExceptionHandler(UserNotFoundException.class)
+  @ExceptionHandler({UserNotFoundException.class, FilmNotFoundException.class})
   public ResponseEntity<Object> handleResourceNotFoundException(RuntimeException ex) {
     ErrorResponse error = new ErrorResponse(ex.getMessage());
     return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler(CalculationCostException.class)
+  public ResponseEntity<Object> handleCalculationCostException(RuntimeException ex) {
+    ErrorResponse error = new ErrorResponse(ex.getMessage());
+    return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }
