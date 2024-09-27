@@ -28,12 +28,12 @@ public class RentalServiceImpl implements RentalService {
   private final RentalMapper rentalMapper;
 
   @Override
-  public RentalDTO rentFilm(Long userId, Long filmId, int durationInDays) {
+  public RentalDTO rentFilm(String username, String filmTitle, int durationInDays) {
 
-    User user = userRepository.findById(userId)
+    User user = userRepository.findByUsername(username)
                               .orElseThrow(() -> new RuntimeException("User not found"));
 
-    Film film = filmRepository.findById(filmId)
+    Film film = filmRepository.findByTitle(filmTitle)
                               .orElseThrow(() -> new RuntimeException("Film not found"));
 
     Rental rental = new Rental();

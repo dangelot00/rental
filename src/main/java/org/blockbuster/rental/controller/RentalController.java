@@ -2,6 +2,7 @@ package org.blockbuster.rental.controller;
 
 import org.blockbuster.rental.service.RentalService;
 import org.blockbuster.rental.web.RentalDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Rentals", description = "Operations related to film rentals")
 public class RentalController {
 
+  @Autowired
   private RentalService rentalService;
 
   @Operation(summary = "Rent a film")
@@ -28,11 +30,11 @@ public class RentalController {
   })
   @PostMapping("/rent")
   public ResponseEntity<RentalDTO> rentFilm(
-      @RequestParam @Parameter(description = "User ID") Long userId,
-      @RequestParam @Parameter(description = "Film ID") Long filmId,
+      @RequestParam @Parameter(description = "Username") String username,
+      @RequestParam @Parameter(description = "Film Title") String filmTitle,
       @RequestParam @Parameter(description = "Duration in days") int durationInDays) {
 
-    RentalDTO rentalDTO = rentalService.rentFilm(userId, filmId, durationInDays);
+    RentalDTO rentalDTO = rentalService.rentFilm(username, filmTitle, durationInDays);
     return ResponseEntity.ok(rentalDTO);
   }
 

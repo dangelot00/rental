@@ -52,10 +52,10 @@ public class RentalServiceImplTest {
     User user = new User(1L, "mario_rossi", "password", 0, false);
     Film film = new Film(1L, "Film Title", FilmGenre.STANDARD);
 
-    when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-    when(filmRepository.findById(1L)).thenReturn(Optional.of(film));
+    when(userRepository.findByUsername("mario_rossi")).thenReturn(Optional.of(user));
+    when(filmRepository.findByTitle("Film Title")).thenReturn(Optional.of(film));
 
-    RentalDTO rentalDTO = rentalService.rentFilm(1L, 1L, 3);
+    RentalDTO rentalDTO = rentalService.rentFilm("mario_rossi", "Film Title", 3);
 
     assertNotNull(rentalDTO);
     assertEquals(BigDecimal.valueOf(15), rentalDTO.getCost());
