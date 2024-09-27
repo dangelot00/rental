@@ -1,6 +1,10 @@
 package org.blockbuster.rental.entity;
 
+import org.blockbuster.rental.enums.FilmGenre;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,5 +24,6 @@ public class Film {
 
   private String title;
 
-  private String genre;
+  @Enumerated(EnumType.STRING)
+  private FilmGenre genre;
 }
