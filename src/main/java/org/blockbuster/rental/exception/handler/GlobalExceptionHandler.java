@@ -5,6 +5,8 @@ import io.jsonwebtoken.security.SignatureException;
 
 import org.blockbuster.rental.exception.CalculationCostException;
 import org.blockbuster.rental.exception.FilmNotFoundException;
+import org.blockbuster.rental.exception.NotEnoughBalanceException;
+import org.blockbuster.rental.exception.RentalNotFoundException;
 import org.blockbuster.rental.exception.UserNotFoundException;
 import org.blockbuster.rental.web.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -17,7 +19,10 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
   @ExceptionHandler({BadCredentialsException.class, AccountStatusException.class, AccessDeniedException.class, SignatureException.class, ExpiredJwtException.class})
   public ProblemDetail handleSecurityException(Exception exception) {
@@ -55,12 +60,12 @@ public class GlobalExceptionHandler {
       errorDetail.setProperty("description", "Unknown internal server error");
     }
 
-    // in a real-world application, you would keep logs of the stack trace with some additional information
+    log.error("Security exception: {}", exception.getMessage(), exception);
 
     return errorDetail;
   }
 
-  @ExceptionHandler({UserNotFoundException.class, FilmNotFoundException.class})
+  @ExceptionHandler({UserNotFoundException.class, FilmNotFoundException.class, RentalNotFoundException.class})
   public ResponseEntity<Object> handleResourceNotFoundException(RuntimeException ex) {
     ErrorResponse error = new ErrorResponse(ex.getMessage());
     return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
@@ -70,5 +75,11 @@ public class GlobalExceptionHandler {
   public ResponseEntity<Object> handleCalculationCostException(RuntimeException ex) {
     ErrorResponse error = new ErrorResponse(ex.getMessage());
     return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ExceptionHandler(NotEnoughBalanceException.class)
+  public ResponseEntity<Object> handleNotEnoughBalanceException() {
+    ErrorResponse error = new ErrorResponse("Insufficient balance to rent film");
+    return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
   }
 }
