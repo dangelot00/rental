@@ -6,6 +6,7 @@ import io.jsonwebtoken.security.SignatureException;
 import org.blockbuster.rental.exception.CalculationCostException;
 import org.blockbuster.rental.exception.FilmNotFoundException;
 import org.blockbuster.rental.exception.NotEnoughBalanceException;
+import org.blockbuster.rental.exception.RentalAlreadyReturnedException;
 import org.blockbuster.rental.exception.RentalNotFoundException;
 import org.blockbuster.rental.exception.UserNotFoundException;
 import org.blockbuster.rental.web.response.ErrorResponse;
@@ -63,6 +64,12 @@ public class GlobalExceptionHandler {
     log.error("Security exception: {}", exception.getMessage(), exception);
 
     return errorDetail;
+  }
+
+  @ExceptionHandler(RentalAlreadyReturnedException.class)
+  public ResponseEntity<Object> handleBadRequests(RuntimeException ex) {
+    ErrorResponse error = new ErrorResponse(ex.getMessage());
+    return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler({UserNotFoundException.class, FilmNotFoundException.class, RentalNotFoundException.class})
