@@ -2,6 +2,7 @@ package org.blockbuster.rental.entity;
 
 import org.blockbuster.rental.enums.FilmGenre;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -22,6 +23,7 @@ public class Film {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(unique = true)
   private String title;
 
   @Enumerated(EnumType.STRING)
