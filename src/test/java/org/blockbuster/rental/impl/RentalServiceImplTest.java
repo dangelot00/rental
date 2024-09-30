@@ -49,7 +49,7 @@ public class RentalServiceImplTest {
   public void testRentFilm () {
 
     // Setup mock data
-    User user = new User(1L, "mario_rossi", "password", 0, false, BigDecimal.ZERO);
+    User user = new User(1L, "mario_rossi", "password", 0, false, BigDecimal.valueOf(20));
     Film film = new Film(1L, "Film Title", FilmGenre.STANDARD);
 
     when(userRepository.findByUsername("mario_rossi")).thenReturn(Optional.of(user));
