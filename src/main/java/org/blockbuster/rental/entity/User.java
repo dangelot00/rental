@@ -3,6 +3,7 @@ package org.blockbuster.rental.entity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "`USER`") // This is necessary because `user` is a reserved keyword in H2
+@Table(name = "APP_USER")
 public class User implements UserDetails {
 
   @Id
@@ -35,6 +36,8 @@ public class User implements UserDetails {
   private int totalRentals = 0;
 
   private boolean hasMissedFilm = false;
+
+  private BigDecimal credit = BigDecimal.ZERO;
 
   // I'm not implementing the method below because I will not be covering role-based access control
   @Override
