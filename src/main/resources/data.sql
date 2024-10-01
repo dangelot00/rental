@@ -2,10 +2,10 @@
 
 /* add test user with encrypted password 123 and 1000 credits */
 INSERT INTO APP_USER (username, password, credit, has_missed_film, total_rentals)
-VALUES ('test', '$2a$10$xH6FBE7edBMoZ0UIySkdAunEdgPME.P/enzeEVGGLSGBqe3AIaNIy', 1000, 0, 0);
+VALUES ('test', '$2a$10$xH6FBE7edBMoZ0UIySkdAunEdgPME.P/enzeEVGGLSGBqe3AIaNIy', 1000, 0, 1);
 /* add test user with encrypted password 123 and 10 credits */
 INSERT INTO APP_USER (username, password, credit, has_missed_film, total_rentals)
-VALUES ('test2', '$2a$10$xH6FBE7edBMoZ0UIySkdAunEdgPME.P/enzeEVGGLSGBqe3AIaNIy', 10, 0, 0);
+VALUES ('test2', '$2a$10$xH6FBE7edBMoZ0UIySkdAunEdgPME.P/enzeEVGGLSGBqe3AIaNIy', 10, 0, 1);
 
 /* film mocks */
 

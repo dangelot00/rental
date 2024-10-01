@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
     return errorDetail;
   }
 
-  @ExceptionHandler(RentalAlreadyReturnedException.class)
+  @ExceptionHandler({RentalAlreadyReturnedException.class, IllegalArgumentException.class})
   public ResponseEntity<Object> handleBadRequests(RuntimeException ex) {
     ErrorResponse error = new ErrorResponse(ex.getMessage());
     return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);

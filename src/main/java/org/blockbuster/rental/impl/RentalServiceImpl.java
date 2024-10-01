@@ -38,6 +38,10 @@ public class RentalServiceImpl implements RentalService {
   @Override
   public RentalDTO rentFilm(String username, String filmTitle, int durationInDays) {
 
+    if (durationInDays <= 0) {
+      throw new IllegalArgumentException("Duration in days must be greater than 0");
+    }
+
     User user = userRepository.findByUsername(username)
                               .orElseThrow(() -> new UserNotFoundException(username));
 
@@ -105,7 +109,6 @@ public class RentalServiceImpl implements RentalService {
       user.setHasMissedFilm(true);
       // I assume that the user's credit can be negative
       user.setCredit(user.getCredit().subtract(lateFee));
-      userRepository.save(user);
     }
 
     // Return deposit to user
@@ -116,6 +119,10 @@ public class RentalServiceImpl implements RentalService {
   }
 
   private BigDecimal calculateCost(FilmGenre genre, int durationInDays) {
+
+    if (genre == null) {
+      throw new CalculationCostException("Unknown genre in cost calculation");
+    }
 
     return switch (genre) {
 
@@ -128,12 +135,15 @@ public class RentalServiceImpl implements RentalService {
         yield BigDecimal.valueOf(10L * weeks);
       }
 
-      default -> throw new CalculationCostException("Unknown genre in cost calculation");
     };
 
   }
 
   private BigDecimal calculateDeposit(User user, FilmGenre genre) {
+
+    if (genre == null) {
+      throw new CalculationCostException("Unknown genre in deposit calculation");
+    }
 
     boolean noDepositRequired = user.getTotalRentals() >= 2 && !user.isHasMissedFilm();
 
@@ -145,7 +155,6 @@ public class RentalServiceImpl implements RentalService {
 
       case CHILDREN -> BigDecimal.valueOf(1);
 
-      default -> throw new CalculationCostException("Unknown genre in deposit calculation");
     };
 
   }

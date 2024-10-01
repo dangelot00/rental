@@ -29,6 +29,7 @@ public class RentalController {
   @Operation(summary = "Rent a film")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Rental successful"),
+      @ApiResponse(responseCode = "400", description = "Bad request, duration must be greater than 0"),
       @ApiResponse(responseCode = "403", description = "Access denied"),
       @ApiResponse(responseCode = "404", description = "User or Film not found"),
       @ApiResponse(responseCode = "422", description = "User does not have enough credit")
