@@ -12,11 +12,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.blockbuster.rental.config.jwt.JwtTokenProvider;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
 @RequestMapping("/auth")
 @RestController
 @Slf4j
+@Tag(name = "Authentication", description = "Operations related to authentication")
 public class AuthenticationController {
   private final JwtTokenProvider jwtService;
 
@@ -27,6 +32,11 @@ public class AuthenticationController {
     this.authenticationService = authenticationService;
   }
 
+  @Operation(summary = "Register a new user")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "User registered successfully"),
+      @ApiResponse(responseCode = "400", description = "Bad request, username already exists")
+  })
   @PostMapping("/signup")
   public ResponseEntity<User> register(@RequestBody RegisterUserDTO registerUserDto) {
     log.debug("Received signup request for username: {}", registerUserDto.getUsername());
@@ -36,6 +46,11 @@ public class AuthenticationController {
     return ResponseEntity.ok(registeredUser);
   }
 
+  @Operation(summary = "Authenticate a user")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "User authenticated successfully"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized, bad credentials")
+    })
   @PostMapping("/login")
   public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDTO LoginUserDTO) {
     User authenticatedUser = authenticationService.authenticate(LoginUserDTO);
