@@ -141,6 +141,11 @@ Access Swagger UI: ```http://localhost:8080/swagger-ui.html```
     - ```rentalId```: ID of the rental to return.
 - **Response**: ```200 OK``` with confirmation message.
 
+#### Get User's Rentals
+- **Endpoint**: ```GET /rentals/my-rentals```
+- **Description**: Retrieves rentals of the authenticated user.
+- **Response**: ```200 OK``` with an array of rental details.
+
 ## Testing
 
 The project includes a mini suite of unit tests, only regarding the most critical methods.
