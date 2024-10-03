@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 import lombok.AllArgsConstructor;
@@ -116,6 +118,18 @@ public class RentalServiceImpl implements RentalService {
     userRepository.save(user);
 
     rentalRepository.save(rental);
+  }
+
+  @Override
+  public List<RentalDTO> getRentalsByUsername(String username) {
+    User user = userRepository.findByUsername(username)
+        .orElseThrow(() -> new UserNotFoundException(username));
+
+    List<Rental> rentals = rentalRepository.findByUser(user);
+
+    return rentals.stream()
+                  .map(rentalMapper::toDTO)
+                  .collect(Collectors.toList());
   }
 
   private BigDecimal calculateCost(FilmGenre genre, int durationInDays) {

@@ -29,6 +29,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import static java.time.temporal.ChronoUnit.DAYS;
 
@@ -52,6 +54,7 @@ public class RentalServiceImplTest {
 
   private User user;
   private Film film;
+  private Film film2;
   private Rental rental;
 
   @BeforeEach
@@ -68,6 +71,11 @@ public class RentalServiceImplTest {
     film.setId(1L);
     film.setTitle("testFilm");
     film.setGenre(FilmGenre.STANDARD);
+
+    film2 = new Film();
+    film2.setId(2L);
+    film2.setTitle("testFilm2");
+    film2.setGenre(FilmGenre.LAST_EXIT);
 
     rental = new Rental();
     rental.setId(1L);
@@ -442,6 +450,57 @@ public class RentalServiceImplTest {
     });
 
     assertEquals("Database error", exception.getMessage());
+  }
+
+  @Test
+  public void testGetRentalsByUsername_Success() {
+    String username = "testUser";
+
+    Rental rental1 = new Rental(1L, user, film, LocalDate.now().minusDays(5), LocalDate.now().plusDays(5), null, BigDecimal.valueOf(15), BigDecimal.valueOf(3), false);
+    Rental rental2 = new Rental(2L, user, film2, LocalDate.now().minusDays(10), LocalDate.now().plusDays(2), null, BigDecimal.valueOf(21), BigDecimal.valueOf(4), false);
+    Rental rental3 = new Rental(3L, user, film, LocalDate.now().minusDays(2), LocalDate.now().plusDays(3), LocalDate.now().plusDays(1), BigDecimal.valueOf(10), BigDecimal.valueOf(2), true);
+
+    when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
+    when(rentalRepository.findByUser(user)).thenReturn(Arrays.asList(rental1, rental2, rental3));
+    when(rentalMapper.toDTO(rental1)).thenReturn(new RentalDTO(rental1.getId(), user.getId(), film.getId(), rental1.getRentalDate(), rental1.getDueDate(), rental1.getReturnDate(), rental1.getCost(), rental1.getDeposit(), rental1.isLate()));
+    when(rentalMapper.toDTO(rental2)).thenReturn(new RentalDTO(rental2.getId(), user.getId(), film2.getId(), rental2.getRentalDate(), rental2.getDueDate(), rental2.getReturnDate(), rental2.getCost(), rental2.getDeposit(), rental2.isLate()));
+    when(rentalMapper.toDTO(rental3)).thenReturn(new RentalDTO(rental3.getId(), user.getId(), film.getId(), rental3.getRentalDate(), rental3.getDueDate(), rental3.getReturnDate(), rental3.getCost(), rental3.getDeposit(), rental3.isLate()));
+
+    List<RentalDTO> rentals = rentalService.getRentalsByUsername(username);
+
+    assertNotNull(rentals);
+    assertEquals(3, rentals.size());
+
+    RentalDTO rentalDTO1 = rentals.get(0);
+    assertEquals(1L, rentalDTO1.getId());
+    assertEquals(1L, rentalDTO1.getUserId());
+    assertEquals(1L, rentalDTO1.getFilmId());
+    assertEquals(BigDecimal.valueOf(15), rentalDTO1.getCost());
+
+    RentalDTO rentalDTO2 = rentals.get(1);
+    assertEquals(2L, rentalDTO2.getId());
+    assertEquals(2L, rentalDTO2.getFilmId());
+    assertEquals(1L, rentalDTO2.getUserId());
+    assertEquals(BigDecimal.valueOf(21), rentalDTO2.getCost());
+
+    RentalDTO rentalDTO3 = rentals.get(2);
+    assertEquals(3L, rentalDTO3.getId());
+    assertEquals(1L, rentalDTO3.getFilmId());
+    assertEquals(1L, rentalDTO3.getUserId());
+    assertEquals(BigDecimal.valueOf(10), rentalDTO3.getCost());
+  }
+
+  @Test
+  public void testGetRentalsByUsername_UserNotFound() {
+    String username = "nonExistentUser";
+
+    when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
+
+    Exception exception = assertThrows(UserNotFoundException.class, () -> {
+      rentalService.getRentalsByUsername(username);
+    });
+
+    assertEquals("The username '" + username + "' does not exist", exception.getMessage());
   }
 
   // Additional tests for edge cases

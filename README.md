@@ -160,7 +160,7 @@ mvn test
 src
 ├── main
 │   ├── java
-│   │   └── org.blockbuster.filmrental
+│   │   └── org.blockbuster.rental
 │   │       ├── config
 │   │       │   ├── jwt
 │   │       │   │   ├── JwtAuthenticationFilter.java
@@ -219,7 +219,7 @@ src
 │       └── schema.sql
 └── test
     └── java
-        └── org.blockbuster.filmrental
+        └── org.blockbuster.rental
             └── impl
                 └── RentalServiceImplTest.java
 ```

@@ -5,15 +5,19 @@ import org.blockbuster.rental.web.RentalDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +30,7 @@ public class RentalController {
   @Autowired
   private RentalService rentalService;
 
-  @Operation(summary = "Rent a film")
+  @Operation(summary = "Rent a film", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Rental successful"),
       @ApiResponse(responseCode = "400", description = "Bad request, duration must be greater than 0"),
@@ -47,7 +51,19 @@ public class RentalController {
     return ResponseEntity.ok(rentalDTO);
   }
 
-  @Operation(summary = "Return a film")
+  @Operation(summary = "Get User's Rentals", description = "Retrieves all rentals of the authenticated user", security = @SecurityRequirement(name = "bearerAuth"))
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Rentals retrieved successfully"),
+      @ApiResponse(responseCode = "403", description = "Forbidden")
+  })
+  @GetMapping("/my-rentals")
+  public ResponseEntity<List<RentalDTO>> getMyRentals(Authentication authentication) {
+    String username = authentication.getName();
+    List<RentalDTO> rentals = rentalService.getRentalsByUsername(username);
+    return ResponseEntity.ok(rentals);
+  }
+
+  @Operation(summary = "Return a film", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Film returned successfully"),
       @ApiResponse(responseCode = "403", description = "Access denied"),

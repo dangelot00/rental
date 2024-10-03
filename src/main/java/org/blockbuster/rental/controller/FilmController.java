@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
@@ -21,14 +22,14 @@ public class FilmController {
   @Autowired
   private FilmService filmService;
 
-  @Operation(summary = "Get all films")
+  @Operation(summary = "Get all films", security = @SecurityRequirement(name = "bearerAuth"))
   @GetMapping
   public ResponseEntity<List<FilmDTO>> getAllFilms() {
     List<FilmDTO> films = filmService.getAllFilms();
     return ResponseEntity.ok(films);
   }
 
-  @Operation(summary = "Get film by Title")
+  @Operation(summary = "Get film by Title", security = @SecurityRequirement(name = "bearerAuth"))
   @GetMapping("/{title}")
   public ResponseEntity<FilmDTO> getFilmById(@PathVariable String title) {
     FilmDTO film = filmService.getFilmByTitle(title);
